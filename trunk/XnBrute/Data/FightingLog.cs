@@ -9,5 +9,27 @@ namespace XnBrute.Data
     /// </summary>
     class FightingLog
     {
+        public Queue<FightingLogStep> fightingSteps = new Queue<FightingLogStep>();
+    }
+
+    class FightingLogStep
+    {
+        // ฝ่ายรุก
+        public int actionTeamIndex;
+        
+        // ผู้รุก
+        public List<int> actionFightersIndex = new List<int>();
+        
+        // ลักษณะการรุก
+        public int actionTypeId;
+        
+        // ฝ่ายรับ
+        public int reactionTeamIndex;
+        
+        // ผู้รับ และลักษณะการรับ
+        public KeyValuePair<int, int> fighterReactionTypePairs = new KeyValuePair<int, int>();
+
+        // คิวสเตปย่อย
+        public Queue<FightingLogStep> subSteps = new Queue<FightingLogStep>();
     }
 }

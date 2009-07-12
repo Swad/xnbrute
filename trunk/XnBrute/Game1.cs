@@ -9,6 +9,8 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Net;
 using Microsoft.Xna.Framework.Storage;
+using XnBrute.Visualization;
+using XnBrute.Data;
 
 namespace XnBrute
 {
@@ -18,7 +20,6 @@ namespace XnBrute
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
 
         public Game1()
         {
@@ -26,65 +27,44 @@ namespace XnBrute
             Content.RootDirectory = "Content";
         }
 
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
-        protected override void Initialize()
-        {
-            // TODO: Add your initialization logic here
+        FightingLogDisplayer logDisplay;
+        DrawingContext drawContext;
 
-            base.Initialize();
-        }
-
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            drawContext = new DrawingContext();
+            drawContext.graphicsDevice = GraphicsDevice;
+            drawContext.contentManager = Content;
+            drawContext.spriteBatch = new SpriteBatch(GraphicsDevice);
+            drawContext.font1 = Content.Load<SpriteFont>("font1");
 
-            // TODO: use this.Content to load your game content here
+            // สรัาง log
+            FightingLog testLog1 = new FightingLog();
+            testLog1.fightingSteps.Enqueue(new FightingLogStep());
+            testLog1.fightingSteps.Enqueue(new FightingLogStep());
+            FightingLogStep s1 = new FightingLogStep();
+            s1.subSteps.Enqueue(new FightingLogStep());
+            s1.subSteps.Enqueue(new FightingLogStep());
+            testLog1.fightingSteps.Enqueue(s1);
+            testLog1.fightingSteps.Enqueue(new FightingLogStep());
+            
+            // สร้าง log displayer
+            logDisplay = new FightingLogDisplayer(testLog1, drawContext);
+            logDisplay.Play();
         }
 
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// all content.
-        /// </summary>
-        protected override void UnloadContent()
-        {
-            // TODO: Unload any non ContentManager content here
-        }
-
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
-
-            // TODO: Add your update logic here
+            logDisplay.Update(gameTime);
 
             base.Update(gameTime);
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            logDisplay.Draw(gameTime);
 
             base.Draw(gameTime);
         }
