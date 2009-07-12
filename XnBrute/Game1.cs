@@ -20,11 +20,27 @@ namespace XnBrute
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
-
+        IActorServices IActors;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+           
+        }
+        protected override void Initialize()
+        {
+            // TODO: Add your initialization logic here
+
+
+            ActorServices actorS = new ActorServices(this);
+            Services.AddService(typeof(IActorServices), actorS);
+            Components.Add(actorS);
+
+            IActors = (IActorServices)Services.GetService(typeof(IActorServices));
+            Texture2D rockman = Content.Load<Texture2D>(@"monster/rockman");
+            IActors.createActor(rockman, new Vector2(24, 30), new Vector2(100, 500), 2);
+            base.Initialize();
         }
 
         FightingLogDisplayer logDisplay;
@@ -51,6 +67,11 @@ namespace XnBrute
             // สร้าง log displayer
             logDisplay = new FightingLogDisplayer(testLog1, drawContext);
             logDisplay.Play();
+
+
+
+           
+
         }
 
         protected override void Update(GameTime gameTime)
@@ -65,7 +86,7 @@ namespace XnBrute
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             logDisplay.Draw(gameTime);
-
+            IActors.standActor();
             base.Draw(gameTime);
         }
     }
